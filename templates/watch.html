@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="watch-layout">
+
+  <!-- VIDEO PLAYER -->
+  <div class="video-player">
+    <video
+      id="player"
+      controls
+      autoplay
+    >
+      <source src="/media/{{ media.filepath }}">
+    </video>
+
+    <div id="next-overlay" class="next-overlay hidden">
+      Next video starting…
+    </div>
+  </div>
+
+  <!-- EPISODE SIDEBAR -->
+  {% if episodes %}
+  <aside class="episode-sidebar">
+    <h3 class="episode-title">Episodes</h3>
+
+    <div class="episode-list">
+      {% for ep in episodes %}
+      <a href="/watch/{{ ep.id }}"
+         class="episode-item {% if ep.id == media.id %}active{% endif %}">
+
+        <div class="episode-thumb">
+          <img src="{{ ep.thumb }}" alt="{{ ep.title }}">
+        </div>
+
+        <div class="episode-info">
+          <div class="episode-name">{{ ep.title }}</div>
+
+          {% if ep.progress %}
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ ep.progress }}%;"></div>
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </aside>
+  {% endif %}
+
+</div>
+
+<script>
+/* -------------------------------
+   GLOBAL DATA (FROM BACKEND)
+-------------------------------- */
+const video = document.getElementById("player");
+const overlay = document.getElementById("next-overlay");
+
+const savedProgress = {{ progress | default(0) }};
+const hasEpisodes = {{ episodes|length }} > 0;
+const nextMediaId = {{ next_media.id if next_media else "null" }};
+
+/* -------------------------------
+   RESUME PLAYBACK
+-------------------------------- */
+video.addEventListener("loadedmetadata", () => {
+  if (savedProgress > 0 && video.duration) {
+    video.currentTime = video.duration * (savedProgress / 100);
+  }
+});
+
+/* -------------------------------
+   SAVE WATCH PROGRESS
+-------------------------------- */
+setInterval(() => {
+  if (!video.duration) return;
+
+  const percent = Math.floor(
+    (video.currentTime / video.duration) * 100
+  );
+
+  fetch("/progress", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      media_id: {{ media.id }},
+      progress: percent
+    })
+  });
+}, 5000);
+
+/* -------------------------------
+   AUTO‑REDIRECT (NO EPISODES)
+-------------------------------- */
+if (!hasEpisodes && nextMediaId) {
+  video.addEventListener("ended", () => {
+    overlay.classList.remove("hidden");
+
+    setTimeout(() => {
+      window.location.href = `/watch/${nextMediaId}`;
+    }, 3000);
+  });
+}
+</script>
+<script>
+/* ===============================
+ GLOBAL
+================================ */
+const video = document.getElementById("player");
+const overlay = document.getElementById("next-overlay");
+
+const savedProgress = {{ progress | default(0) }};
+const hasEpisodes = {{ episodes|length }} > 0;
+const nextMediaId = { next_media.id if next_media else "null" };
+
+let redirected = false;
+
+/* ===============================
+ RESUME PLAYBACK
+================================ */
+video.addEventListener("loadedmetadata", () => {
+  if (savedProgress > 0 && video.duration) {
+    video.currentTime = video.duration * (savedProgress / 100);
+  }
+});
+
+/* ===============================
+ SAVE PROGRESS
+================================ */
+setInterval(() => {
+  if (!video.duration || video.paused) return;
+
+  const percent = Math.floor(
+    (video.currentTime / video.duration) * 100
+  );
+
+  fetch("/progress", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      media_id: {{ media.id }},
+      progress: percent
+    })
+  });
+}, 5000);
+
+/* ===============================
+ AUTO PLAY NEXT (ROBUST)
+================================ */
+function goNext() {
+  if (redirected) return;
+  redirected = true;
+
+  if (overlay) overlay.classList.remove("hidden");
+
+  setTimeout(() => {
+    window.location.href = `/watch/${nextMediaId}`;
+  }, 2500);
+}
+
+if (!hasEpisodes && nextMediaId) {
+
+  /* Desktop */
+  video.addEventListener("ended", goNext);
+
+  /* Mobile fallback */
+  video.addEventListener("timeupdate", () => {
+    if (
+      video.duration &&
+      video.currentTime >= video.duration - 0.4
+    ) {
+      goNext();
+    }
+  });
+
+  /* Safari iOS fix */
+  video.addEventListener("pause", () => {
+    if (
+      video.duration &&
+      video.currentTime >= video.duration - 0.4
+    ) {
+      goNext();
+    }
+  });
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "admin/dashboard.html" %}
+{% block content %}
+
+<h2>User Management</h2>
+
+<!-- CREATE USER -->
+<div class="card">
+  <h3>Create User</h3>
+
+  <form method="post" action="{{ url_for('create_admin_user') }}" class="form compact">
+    <div class="form-group">
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        required
+        class="input"
+      >
+    </div>
+
+    <div class="form-group">
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+        class="input"
+      >
+    </div>
+
+    <div class="form-group">
+      <select name="role" class="input">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn primary">Create User</button>
+  </form>
+</div>
+
+<hr>
+
+<!-- SEARCH & FILTERS -->
+<div class="card">
+  <form method="get" class="filter-bar compact">
+    <input
+      type="text"
+      name="q"
+      class="input"
+      placeholder="Search username..."
+      value="{{ request.args.get('q', '') }}"
+    >
+
+    <select name="role" class="input">
+      <option value="">All roles</option>
+      <option value="user" {{ 'selected' if request.args.get('role') == 'user' }}>User</option>
+      <option value="admin" {{ 'selected' if request.args.get('role') == 'admin' }}>Admin</option>
+      <option value="root" {{ 'selected' if request.args.get('role') == 'root' }}>Root</option>
+    </select>
+
+    <select name="status" class="input">
+      <option value="">All status</option>
+      <option value="active" {{ 'selected' if request.args.get('status') == 'active' }}>Active</option>
+      <option value="disabled" {{ 'selected' if request.args.get('status') == 'disabled' }}>Disabled</option>
+    </select>
+
+    <button type="submit" class="btn">Filter</button>
+    <a href="{{ url_for('admin_users') }}" class="btn secondary">Reset</a>
+  </form>
+</div>
+
+<!-- USERS TABLE -->
+<h3>Existing Users</h3>
+
+<table class="users-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  {% for u in users %}
+    <tr class="{% if not u.active %}disabled{% endif %}">
+      <td>{{ u.id }}</td>
+      <td>{{ u.username }}</td>
+
+      <td>
+        <span class="badge
+          {% if u.role == 'root' %}green
+          {% elif u.role == 'admin' %}green
+          {% else %}red{% endif %}">
+          {{ u.role }}
+        </span>
+      </td>
+
+      <td>{{ "Active" if u.active else "Disabled" }}</td>
+
+      <td class="actions">
+
+        <!-- ROLE CHANGE -->
+        {% if session.role == "root" and u.role != "root" %}
+          <a href="{{ url_for('change_role', user_id=u.id, role='admin') }}">Promote</a>
+          <a href="{{ url_for('change_role', user_id=u.id, role='user') }}">Demote</a>
+        {% endif %}
+
+        <!-- ENABLE / DISABLE -->
+        {% if u.role != "root" %}
+          <a href="{{ url_for('toggle_user', user_id=u.id) }}">
+            {{ "Disable" if u.active else "Enable" }}
+          </a>
+        {% endif %}
+
+        <!-- PASSWORD RESET -->
+        {% if session.role == "root" and u.role != "root" %}
+          <form
+            method="post"
+            action="{{ url_for('reset_user_password', user_id=u.id) }}"
+            class="inline-form"
+          >
+            <input
+              type="password"
+              name="password"
+              placeholder="New password"
+              class="input small"
+              required
+            >
+            <button type="submit" class="btn danger small">Reset</button>
+          </form>
+        {% endif %}
+
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

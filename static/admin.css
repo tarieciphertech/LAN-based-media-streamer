@@ -1,0 +1,256 @@
+/* ================= GLOBAL ================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* ================= LAYOUT ================= */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ================= SIDEBAR ================= */
+.admin-sidebar {
+  width: 220px;
+  background: #020617;
+  padding: 20px;
+}
+
+.admin-logo {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.admin-sidebar nav a {
+  display: block;
+  color: #cbd5f5;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.admin-sidebar nav a:hover {
+  color: #38bdf8;
+}
+
+.admin-sidebar hr {
+  border: 0;
+  border-top: 1px solid #1e293b;
+  margin: 15px 0;
+}
+
+/* ================= CONTENT ================= */
+.admin-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.admin-content h2 {
+  margin-bottom: 20px;
+}
+
+/* ================= FORMS ================= */
+form {
+  max-width: 420px;     /* ⬅ prevents wide inputs */
+  background: #020617;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+form input:focus,
+form select:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+form button {
+  width: auto;          /* ⬅ key fix */
+  padding: 10px 16px;
+  background: #38bdf8;
+  color: #020617;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+form button:hover {
+  opacity: 0.9;
+}
+
+/* ================= TABLES ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #020617;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #1e293b;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #020617;
+  color: #94a3b8;
+}
+
+tr.disabled {
+  opacity: 0.5;
+}
+
+/* ================= ACTION LINKS ================= */
+.actions a {
+  margin-right: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.actions a.promote { color: #22c55e; }
+.actions a.demote { color: #facc15; }
+.actions a.disable { color: #ef4444; }
+.actions a.reset { color: #38bdf8; }
+
+/* ================= BADGES ================= */
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge.green { background: #16a34a; }
+.badge.red { background: #dc2626; }
+.badge.blue { background: #2563eb; }
+
+/* ================= CARDS ================= */
+.card {
+  max-width: 420px;
+  padding: 20px;
+  background: #020617;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+  }
+
+  form {
+    max-width: 100%;
+  }
+}
+/* Forms */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  max-width: 320px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #fff;
+}
+
+.input.small {
+  max-width: 160px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn.primary {
+  background: #38bdf8;
+  color: #020617;
+}
+
+.btn.danger {
+  background: #dc3545;
+  color: #fff;
+}
+
+.inline-form {
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 8px;
+}
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+  width: 180px;
+  padding: 8px 10px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  color: #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.filter-bar button,
+.filter-bar .btn-secondary {
+  padding: 8px 14px;
+  background: #38bdf8;
+  border: none;
+  color: #020617;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.filter-bar .btn-secondary {
+  background: #1e293b;
+  color: #cbd5f5;
+}
+
+.filter-bar button:hover {
+  opacity: 0.9;
+}

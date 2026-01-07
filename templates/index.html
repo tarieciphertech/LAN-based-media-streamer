@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-container">
+
+<h2 style="margin-bottom:16px;">Browse</h2>
+
+<!-- NETFLIX STYLE SEARCH -->
+<form method="get" class="home-search">
+  <input
+    type="text"
+    name="q"
+    placeholder="Search movies, shows..."
+    value="{{ request.args.get('q', '') }}"
+  >
+
+  <select name="category">
+    <option value="">All</option>
+    {% for c in categories %}
+      <option value="{{ c }}" {% if request.args.get('category') == c %}selected{% endif %}>
+        {{ c|capitalize }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Search</button>
+
+  {% if request.args %}
+    <a href="/" class="reset-link">Reset</a>
+  {% endif %}
+</form>
+
+<!-- MEDIA GRID -->
+<div class="media-grid">
+{% for item in media %}
+  <a href="{{ url_for('watch', media_id=item.id) }}" class="media-link">
+
+    <div class="media-card">
+
+      <div class="media-thumb">
+        {% if item.is_video %}
+          <video muted loop preload="none" poster="{{ item.thumb }}">
+            <source src="{{ item.filepath }}" type="video/mp4">
+          </video>
+          <div class="media-overlay">▶</div>
+        {% else %}
+          <img src="{{ item.thumb }}">
+        {% endif %}
+      </div>
+
+      <div class="media-title">{{ item.title }}</div>
+
+      {% if item.progress %}
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: {{ item.progress }}%"></div>
+      </div>
+      {% endif %}
+
+    </div>
+  </a>
+{% endfor %}
+</div>
+
+</div>
+{% endblock %}

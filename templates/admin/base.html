@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h2 class="admin-logo">Admin</h2>
+
+    <nav>
+      <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('upload_media') }}">Upload Media</a>
+      <a href="{{ url_for('admin_users') }}">Users</a>
+
+      <hr>
+
+      <a href="{{ url_for('index') }}">← Back to App</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-content">
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+
+</body>
+</html>
